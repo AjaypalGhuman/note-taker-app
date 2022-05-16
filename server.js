@@ -12,20 +12,43 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// used to store and retrieve notes
+// get route that returns index.html
+app.get('/', function (req, res) {
+    res.sendFile(
+        path.join(__dirname, '/public/index.html')
+    );
+});
+
+// get route that returns notes.html
+app.get('/notes', function (req, res) {
+    res.sendFile(
+        path.join(__dirname, '/public/notes.html')
+    );
+});
+
+// get route that reads the db.json file and returns all saved notes as JSON
 app.get('/api/notes', (req, res) => {
     res.sendFile(
         path.join(__dirname, '/db/db.json'))
 });
 
+// receives a new note to save on the request body and adds it to db.json file and then returns new note to client
 app.post('/api/notes', (req, res) => {
     const allNotes = JSON.parse(
         fs.readFileSync('./db/db.json')
     );
-    const newNotes = req.body;
-    newNotes.id
-})
 
+    const newlyCreatedNotes = req.body;
+    newlyCreatedNotes.id = uuid.v4();
+    allNotes.push(newlyCreatedNotes);
+
+    fs.writeFileSync('./db/db.json', JSON.stringify(allNotes))
+    res.json(allNotes);
+});
+
+// possible delete request can be added here
+
+// listening
 app.listen(PORT, () => {
     console.log(`API server now on port ${PORT}!`);
 });
