@@ -39,6 +39,7 @@ app.post('/api/notes', (req, res) => {
     );
 
     const newlyCreatedNotes = req.body;
+    // uuid npm package gives each note note a unique id when saved
     newlyCreatedNotes.id = uuid.v4();
     allNotes.push(newlyCreatedNotes);
 
